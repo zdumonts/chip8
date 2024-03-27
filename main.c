@@ -1,18 +1,25 @@
 #include "SDL2/SDL.h"
+#include "chip8.h"
 #include <stdio.h>
 #include <stdbool.h>
 
 const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_HEIGHT = 320;
+const int SCALE = 10;
 int running = true;
 
 SDL_Window* window;
 SDL_Renderer* renderer;
 
 void process_input();
-void render();
+void render(Chip8 chip);
 
 int main(int argv, char** argc) {
+
+	if (argv != 2) {
+		printf("Usage: ./myChip8 <ROM file>\n");
+		exit(1);
+	}
 
 	// Init SDL
 
@@ -44,11 +51,20 @@ int main(int argv, char** argc) {
 
 	running = true;
 
+	Chip8 chip = newChip();
+
+	loadROM(chip, argc[1]);
+
 	while (running) {
+		emulateCycle(chip);
 		process_input();
-		render();
+		render(chip);
 	}
 
+	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
+	SDL_Quit();
+	freeChip(&chip);
 	return 0;
 }
 
@@ -68,13 +84,27 @@ void process_input(void) {
     }
 }
 
-void render(void) {
+void render(Chip8 chip) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
 	// Draw stuff
 
-	
+	for (int x = 0; x < 64; x++) {
+		for (int y = 0; y < 32; y++) {
+			if (getScreen(chip, y*64 + x) == 0) {
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+			} else {
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			}
+			SDL_Rect rect;
+			rect.x = x * SCALE;
+			rect.y = y * SCALE;
+			rect.w = SCALE;
+			rect.h = SCALE;
+			SDL_RenderDrawRect(renderer, &rect);
+		}
+	}
 
 	// Swap buffer
 
