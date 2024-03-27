@@ -58,7 +58,9 @@ int main(int argv, char** argc) {
 	while (running) {
 		emulateCycle(chip);
 		process_input();
-		render(chip);
+		if (getFlag(chip)) 
+			render(chip);
+		SDL_Delay(1);
 	}
 
 	SDL_DestroyWindow(window);
@@ -102,9 +104,10 @@ void render(Chip8 chip) {
 			rect.y = y * SCALE;
 			rect.w = SCALE;
 			rect.h = SCALE;
-			SDL_RenderDrawRect(renderer, &rect);
+			SDL_RenderFillRect(renderer, &rect);
 		}
 	}
+	setFlag(chip);
 
 	// Swap buffer
 

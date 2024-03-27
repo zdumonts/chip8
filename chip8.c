@@ -45,6 +45,14 @@ uint32_t getScreen(Chip8 chip, int x) {
 	return chip->screen[x];
 }
 
+bool getFlag(Chip8 chip) {
+	return chip->drawFlag;
+}
+
+void setFlag(Chip8 chip) {
+	chip->drawFlag = false;
+}
+
 Chip8 newChip() {
 
 	Chip8 chip = calloc(1, sizeof(Chip8Obj));
@@ -171,6 +179,7 @@ void emulateCycle(Chip8 chip) {
 			break;
 		case 0xD000:
 		{
+			printf("0xD000 called: 0x%X\n", chip->opcode);
 			uint8_t x = chip->V[X];
 			uint8_t y = chip->V[Y];
 			uint8_t height = N;

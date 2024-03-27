@@ -12,5 +12,7 @@ void freeChip(Chip8 *chip);
 void loadROM(Chip8 chip, char* filename);
 void emulateCycle(Chip8 chip);
 uint32_t getScreen(Chip8 chip, int x);
+bool getFlag(Chip8 chip);
+void setFlag(Chip8 chip);
 
 #endif
