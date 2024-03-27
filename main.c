@@ -14,6 +14,8 @@ SDL_Renderer* renderer;
 void process_input();
 void render(Chip8 chip);
 
+#define DEBUG
+
 int main(int argv, char** argc) {
 
 	if (argv != 2) {
@@ -108,6 +110,10 @@ void render(Chip8 chip) {
 		}
 	}
 	setFlag(chip);
+
+	//ifndef DEBUG
+	debugRender(chip);
+	//endif
 
 	// Swap buffer
 

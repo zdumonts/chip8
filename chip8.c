@@ -53,6 +53,19 @@ void setFlag(Chip8 chip) {
 	chip->drawFlag = false;
 }
 
+void debugRender(Chip8 chip) {
+	for(int y = 0; y < 32; ++y) {
+		for(int x = 0; x < 64; ++x) { 
+			if(chip->screen[(y*64) + x] == 0)
+				printf("O");
+			else
+				printf(" ");
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
 Chip8 newChip() {
 
 	Chip8 chip = calloc(1, sizeof(Chip8Obj));
