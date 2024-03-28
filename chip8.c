@@ -32,8 +32,8 @@ typedef struct Chip8Obj {
 	uint16_t pc;
 	uint16_t stack[16];
 	uint8_t sp;
-	uint8_t delayTimer;
-	uint8_t soundTimer;
+	uint8_t delay_timer;
+	uint8_t sound_timer;
 	uint8_t keypad[16];
 	uint32_t screen[64 * 32];
 	uint16_t opcode;
@@ -51,6 +51,13 @@ bool getFlag(Chip8 chip) {
 
 void setFlag(Chip8 chip) {
 	chip->drawFlag = false;
+}
+
+void setKey(Chip8 chip, int x) {
+	if (chip->keypad[x] != 0)
+		chip->keypad[x] = 0;
+	else 
+		chip->keypad[x] = 1;
 }
 
 void debugRender(Chip8 chip) {
@@ -138,7 +145,7 @@ void emulateCycle(Chip8 chip) {
 	uint8_t NN = chip->opcode & 0x00FF;
 	uint16_t NNN = chip->opcode & 0x0FFF;
 
-	if (chip->opcode != 0x1228)
+	if ((chip->opcode & 0xF000) != 0x1000)
 		printf("opcode called: 0x%X\n", chip->opcode);
  	
 	switch(chip->opcode & 0xF000) {
@@ -201,6 +208,14 @@ void emulateCycle(Chip8 chip) {
 					chip->V[X] |= chip->V[Y];
 					chip->pc += 2;
 					break;
+				case 0x0002:
+					chip->V[X] &= chip->V[Y];
+					chip ->pc += 2;
+					break;
+				case 0x0003:
+					chip->V[X] ^= chip->V[Y];
+					chip->pc += 2;
+					break;
 				case 0x0004:       
 					if (chip->V[Y] > (0xFF - chip->V[X]))
 						chip->V[0xF] = 1;
@@ -209,19 +224,49 @@ void emulateCycle(Chip8 chip) {
 					chip->V[X] += chip->V[Y];
  	 				chip->pc += 2;          
 					break;
+				case 0x0005:
+					if (chip->V[Y] > chip->V[X]) 
+						chip->V[0xF] = 1;
+					else 
+						chip->V[0xF] = 0;
+					chip->V[X] -= chip->V[Y];
+					chip->pc += 2;
+					break;
+				case 0x0006:
+					chip->V[0xF] = chip->V[X] & 0x1;
+					chip->V[X] >>= 1;
+					chip->pc += 2;
+					break;
+				case 0x0007:
+					if (chip->V[X] > chip->V[Y]) 
+						chip->V[0xF] = 1;
+					else 
+						chip->V[0xF] = 0;
+					chip->V[X] = chip->V[Y] - chip->V[X];
+					chip->pc += 2;
+					break;
+				case 0x000E:
+					chip->V[0xF] = chip->V[X] >> 7;
+					chip->V[X] <<= 1;
+					chip->pc += 2;
+					break;
 				default:
 					printf ("Unknown opcode [0x0000]: 0x%X\n", chip->opcode);
 					chip->pc += 2;
 			}
 			break;
+		case 0x9000:
+			if (chip->V[X] != chip->V[Y])
+				chip->pc += 2;
+			chip->pc += 2;
 		case 0xA000:
 			chip->index = NNN;
 			chip->pc += 2;
 			break;
 		case 0xD000:
 		{
-			uint8_t x = (chip->V[X]) % 64;
-			uint8_t y = (chip->V[Y]) % 32;
+			uint8_t x = (chip->V[X]);
+			uint8_t y = (chip->V[Y]);
 			uint8_t height = N;
 			uint8_t pixel;
 
@@ -242,14 +287,76 @@ void emulateCycle(Chip8 chip) {
 			chip->pc += 2;
 			break;
 		}
-		case 0x0033:
-			chip->memory[chip->index] = chip->V[X] / 100;
-			chip->memory[chip->index + 1] = (chip->V[X] / 10) % 10;
-			chip->memory[chip->index + 2] = (chip->V[X] % 100) % 10;
-			chip->pc += 2;
+		case 0xE000:
+			switch(NN) {
+				case 0x009E:
+					if (chip->keypad[chip->V[X]] == 0)
+						chip->pc += 2;
+					chip->pc += 2;
+					break;
+				case 0x00A1:
+					if (chip->keypad[chip->V[X]] != 0)
+						chip->pc += 2;
+					chip->pc += 2;
+
+					break;
+				default:
+					chip->pc += 2;
+					printf ("Unknown opcode: 0x%X\n", chip->opcode);	
+			}
+			break;
+		case 0xF000:
+			switch (NN) {
+				case 0x0007:
+					chip->V[X] = chip->delay_timer;
+					chip->pc += 2;
+					break;
+				case 0x0033:
+					chip->memory[chip->index] = chip->V[X] / 100;
+					chip->memory[chip->index + 1] = (chip->V[X] / 10) % 10;
+					chip->memory[chip->index + 2] = (chip->V[X] % 100) % 10;
+					chip->pc += 2;
+					break;
+				case 0x001A: {
+					bool pressed = false;
+					for (int i = 0; i < 16; i++) {
+						if (chip->keypad[i] != 0) {
+							chip->V[X] = i;
+							pressed = true;
+						}
+					}
+					if (!pressed)
+						return;
+					chip->pc += 2;
+					break;
+					}
+				case 0x001E:
+					chip->index += chip->V[X];
+					chip->pc += 2;
+					break;
+				case 0x0015:
+					chip->delay_timer = chip->V[X];
+					chip->pc += 2;
+					break;
+				case 0x0018:
+					chip->sound_timer = chip->V[X];
+					chip->pc += 2;
+					break;
+				default:
+					chip->pc += 2;
+					printf ("Unknown opcode: 0x%X\n", chip->opcode);	
+			}
 			break;
 		default:
 			chip->pc += 2;
 			printf ("Unknown opcode: 0x%X\n", chip->opcode);	
 	}    
+	if (chip->delay_timer > 0)
+		--chip->delay_timer;
+
+	if(chip->sound_timer > 0) {
+		if(chip->sound_timer == 1)
+			printf("BEEP!\n");
+		--chip->sound_timer;
+	}
 }

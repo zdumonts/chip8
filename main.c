@@ -11,7 +11,7 @@ int running = true;
 SDL_Window* window;
 SDL_Renderer* renderer;
 
-void process_input();
+void process_input(Chip8 chip);
 void render(Chip8 chip);
 
 #define DEBUG
@@ -59,7 +59,7 @@ int main(int argv, char** argc) {
 
 	while (running) {
 		emulateCycle(chip);
-		process_input();
+		process_input(chip);
 		if (getFlag(chip)) 
 			render(chip);
 		SDL_Delay(1);
@@ -72,7 +72,9 @@ int main(int argv, char** argc) {
 	return 0;
 }
 
-void process_input(void) {
+// TODO: fix massive switch
+
+void process_input(Chip8 chip) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -80,10 +82,117 @@ void process_input(void) {
                 running = false;
                 break;
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    running = false;
-                }
-                break;
+				switch (event.key.keysym.sym) {
+                	case SDLK_ESCAPE:
+                    	running = false;
+                		break;
+					case SDLK_1:
+						setKey(chip, 1);
+						break;
+					case SDLK_2:
+						setKey(chip, 2);
+						break;
+					case SDLK_3:
+						setKey(chip, 3);
+						break;
+					case SDLK_4:
+						setKey(chip, 4);
+						break;
+					case SDLK_q:
+						setKey(chip, 5);
+						break;
+					case SDLK_w:
+						setKey(chip, 6);
+						break;
+					case SDLK_e:
+						setKey(chip, 7);
+						break;
+					case SDLK_r:
+						setKey(chip, 8);
+						break;
+					case SDLK_a:
+						setKey(chip, 9);
+						break;
+					case SDLK_s:
+						setKey(chip, 10);
+						break;
+					case SDLK_d:
+						setKey(chip, 11);
+						break;
+					case SDLK_f:
+						setKey(chip, 12);
+						break;
+					case SDLK_z:
+						setKey(chip, 13);
+						break;
+					case SDLK_x:
+						setKey(chip, 14);
+						break;
+					case SDLK_c:
+						setKey(chip, 15);
+						break;
+					case SDLK_v:
+						setKey(chip, 16);
+					default:
+						running = false;
+				}
+				break;
+            case SDL_KEYUP:
+				switch (event.key.keysym.sym) {
+                	case SDLK_ESCAPE:
+                    	running = false;
+                		break;
+					case SDLK_1:
+						setKey(chip, 1);
+						break;
+					case SDLK_2:
+						setKey(chip, 2);
+						break;
+					case SDLK_3:
+						setKey(chip, 3);
+						break;
+					case SDLK_4:
+						setKey(chip, 4);
+						break;
+					case SDLK_q:
+						setKey(chip, 5);
+						break;
+					case SDLK_w:
+						setKey(chip, 6);
+						break;
+					case SDLK_e:
+						setKey(chip, 7);
+						break;
+					case SDLK_r:
+						setKey(chip, 8);
+						break;
+					case SDLK_a:
+						setKey(chip, 9);
+						break;
+					case SDLK_s:
+						setKey(chip, 10);
+						break;
+					case SDLK_d:
+						setKey(chip, 11);
+						break;
+					case SDLK_f:
+						setKey(chip, 12);
+						break;
+					case SDLK_z:
+						setKey(chip, 13);
+						break;
+					case SDLK_x:
+						setKey(chip, 14);
+						break;
+					case SDLK_c:
+						setKey(chip, 15);
+						break;
+					case SDLK_v:
+						setKey(chip, 16);
+					default:
+						running = false;
+				}
+				break;
         }
     }
 }

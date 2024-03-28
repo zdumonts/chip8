@@ -15,5 +15,6 @@ uint32_t getScreen(Chip8 chip, int x);
 bool getFlag(Chip8 chip);
 void setFlag(Chip8 chip);
 void debugRender(Chip8 chip);
+void setKey(Chip8 chip, int x);
 
 #endif
