@@ -117,7 +117,7 @@ void loadROM(Chip8 chip, char* filename) {
 	uint8_t* buffer = malloc(file_size);
 	rewind(in);
 	size_t res = fread(buffer, 1, file_size, in);
-	assert(res == file_size);
+	assert((int)res == file_size);
 
 
 	for (int i = 0; i < file_size; ++i) {
