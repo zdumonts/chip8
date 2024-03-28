@@ -142,7 +142,6 @@ void emulateCycle(Chip8 chip) {
 		printf("opcode called: 0x%X\n", chip->opcode);
  	
 	switch(chip->opcode & 0xF000) {
-
 		case 0x0000:
 			switch (N) {
 				case 0x0000:
@@ -160,11 +159,8 @@ void emulateCycle(Chip8 chip) {
 
 				default:
 					printf ("Unknown opcode [0x0000]: 0x%X\n", chip->opcode);   
+					chip->pc += 2;
 			}
-			break;
-		case 0xA000:
-			chip->index = NNN;
-			chip->pc += 2;
 			break;
 		case 0x1000:
 			chip->pc = NNN;
@@ -174,6 +170,19 @@ void emulateCycle(Chip8 chip) {
 			++chip->sp;
 			chip->pc = NNN;
 			break;
+		case 0x3000:
+			if (chip->V[X] == NN) 
+				chip->pc += 2;
+			chip->pc += 2;
+			break;
+		case 0x4000:
+			if (chip->V[X] != NN)
+				chip->pc += 2;
+			chip->pc += 2;
+		case 0x5000:
+			if (chip->V[X] == chip->V[Y]) 
+				chip->pc += 2;
+			chip->pc += 2;
 		case 0x6000:
 			chip->V[X] = NN;
 			chip->pc += 2;
@@ -182,19 +191,32 @@ void emulateCycle(Chip8 chip) {
 			chip->V[X] += NN;
 			chip->pc += 2;
 			break;
-		case 0x0033:
-			chip->memory[chip->index] = chip->V[X] / 100;
-			chip->memory[chip->index + 1] = (chip->V[X] / 10) % 10;
-			chip->memory[chip->index + 2] = (chip->V[X] % 100) % 10;
-			chip->pc += 2;
+		case 0x8000:
+			switch (N) {
+				case 0x0000:
+					chip->V[X] = chip->V[Y];
+					chip->pc += 2;
+					break;
+				case 0x0001:
+					chip->V[X] |= chip->V[Y];
+					chip->pc += 2;
+					break;
+				case 0x0004:       
+					if (chip->V[Y] > (0xFF - chip->V[X]))
+						chip->V[0xF] = 1;
+ 	 				else
+						chip->V[0xF] = 0;
+					chip->V[X] += chip->V[Y];
+ 	 				chip->pc += 2;          
+					break;
+				default:
+					printf ("Unknown opcode [0x0000]: 0x%X\n", chip->opcode);
+					chip->pc += 2;
+			}
 			break;
-		case 0x0004:       
-			if (chip->V[Y] > (0xFF - chip->V[X]))
-				chip->V[0xF] = 1;
- 	 		else
-				chip->V[0xF] = 0;
-				chip->V[X] += chip->V[Y];
- 	 		chip->pc += 2;          
+		case 0xA000:
+			chip->index = NNN;
+			chip->pc += 2;
 			break;
 		case 0xD000:
 		{
@@ -220,10 +242,14 @@ void emulateCycle(Chip8 chip) {
 			chip->pc += 2;
 			break;
 		}
-
-	default:
-		chip->pc += 2;
-		printf ("Unknown opcode: 0x%X\n", chip->opcode);
-		
+		case 0x0033:
+			chip->memory[chip->index] = chip->V[X] / 100;
+			chip->memory[chip->index + 1] = (chip->V[X] / 10) % 10;
+			chip->memory[chip->index + 2] = (chip->V[X] % 100) % 10;
+			chip->pc += 2;
+			break;
+		default:
+			chip->pc += 2;
+			printf ("Unknown opcode: 0x%X\n", chip->opcode);	
 	}    
 }
