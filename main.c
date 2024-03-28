@@ -87,52 +87,52 @@ void process_input(Chip8 chip) {
                     	running = false;
                 		break;
 					case SDLK_1:
-						setKey(chip, 1);
+						setKey(chip, 0x1, true);
 						break;
 					case SDLK_2:
-						setKey(chip, 2);
+						setKey(chip, 0x2, true);
 						break;
 					case SDLK_3:
-						setKey(chip, 3);
+						setKey(chip, 0x3, true);
 						break;
 					case SDLK_4:
-						setKey(chip, 4);
+						setKey(chip, 0xC, true);
 						break;
 					case SDLK_q:
-						setKey(chip, 5);
+						setKey(chip, 0x4, true);
 						break;
 					case SDLK_w:
-						setKey(chip, 6);
+						setKey(chip, 0x5, true);
 						break;
 					case SDLK_e:
-						setKey(chip, 7);
+						setKey(chip, 0x6, true);
 						break;
 					case SDLK_r:
-						setKey(chip, 8);
+						setKey(chip, 0xD, true);
 						break;
 					case SDLK_a:
-						setKey(chip, 9);
+						setKey(chip, 0x7, true);
 						break;
 					case SDLK_s:
-						setKey(chip, 10);
+						setKey(chip, 0x8, true);
 						break;
 					case SDLK_d:
-						setKey(chip, 11);
+						setKey(chip, 0x9, true);
 						break;
 					case SDLK_f:
-						setKey(chip, 12);
+						setKey(chip, 0xE, true);
 						break;
 					case SDLK_z:
-						setKey(chip, 13);
+						setKey(chip, 0xA, true);
 						break;
 					case SDLK_x:
-						setKey(chip, 14);
+						setKey(chip, 0x0, true);
 						break;
 					case SDLK_c:
-						setKey(chip, 15);
+						setKey(chip, 0xB, true);
 						break;
 					case SDLK_v:
-						setKey(chip, 16);
+						setKey(chip, 0xF, true);
 					default:
 						running = false;
 				}
@@ -143,52 +143,52 @@ void process_input(Chip8 chip) {
                     	running = false;
                 		break;
 					case SDLK_1:
-						setKey(chip, 1);
+						setKey(chip, 0x1, false);
 						break;
 					case SDLK_2:
-						setKey(chip, 2);
+						setKey(chip, 0x2, false);
 						break;
 					case SDLK_3:
-						setKey(chip, 3);
+						setKey(chip, 0x3, false);
 						break;
 					case SDLK_4:
-						setKey(chip, 4);
+						setKey(chip, 0xC, false);
 						break;
 					case SDLK_q:
-						setKey(chip, 5);
+						setKey(chip, 0x4, false);
 						break;
 					case SDLK_w:
-						setKey(chip, 6);
+						setKey(chip, 0x5, false);
 						break;
 					case SDLK_e:
-						setKey(chip, 7);
+						setKey(chip, 0x6, false);
 						break;
 					case SDLK_r:
-						setKey(chip, 8);
+						setKey(chip, 0xD, false);
 						break;
 					case SDLK_a:
-						setKey(chip, 9);
+						setKey(chip, 0x7, false);
 						break;
 					case SDLK_s:
-						setKey(chip, 10);
+						setKey(chip, 0x8, false);
 						break;
 					case SDLK_d:
-						setKey(chip, 11);
+						setKey(chip, 0x9, false);
 						break;
 					case SDLK_f:
-						setKey(chip, 12);
+						setKey(chip, 0xE, false);
 						break;
 					case SDLK_z:
-						setKey(chip, 13);
+						setKey(chip, 0xA, false);
 						break;
 					case SDLK_x:
-						setKey(chip, 14);
+						setKey(chip, 0x0, false);
 						break;
 					case SDLK_c:
-						setKey(chip, 15);
+						setKey(chip, 0xB, false);
 						break;
 					case SDLK_v:
-						setKey(chip, 16);
+						setKey(chip, 0xF, false);
 					default:
 						running = false;
 				}

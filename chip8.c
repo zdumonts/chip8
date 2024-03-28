@@ -53,11 +53,11 @@ void setFlag(Chip8 chip) {
 	chip->drawFlag = false;
 }
 
-void setKey(Chip8 chip, int x) {
-	if (chip->keypad[x] != 0)
-		chip->keypad[x] = 0;
-	else 
+void setKey(Chip8 chip, int x, bool down) {
+	if (down)
 		chip->keypad[x] = 1;
+	else 
+		chip->keypad[x] = 0;
 }
 
 void debugRender(Chip8 chip) {
