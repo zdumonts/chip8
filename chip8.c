@@ -131,12 +131,15 @@ void loadROM(Chip8 chip, char* filename) {
 }
 
 void emulateCycle(Chip8 chip) {
-	chip->opcode = chip->memory[chip->pc] << 8 | chip->memory[chip->pc + 1];
-	uint8_t X = chip->opcode & 0x0F00 >> 8;
-	uint8_t Y = chip->opcode & 0x00F0 >> 4;
+	chip->opcode = (chip->memory[chip->pc] << 8) | (chip->memory[chip->pc + 1]);
+	uint8_t X = (chip->opcode & 0x0F00) >> 8;
+	uint8_t Y = (chip->opcode & 0x00F0) >> 4;
 	uint8_t N = chip->opcode & 0x000F;
 	uint8_t NN = chip->opcode & 0x00FF;
 	uint16_t NNN = chip->opcode & 0x0FFF;
+
+	if (chip->opcode != 0x1228)
+		printf("opcode called: 0x%X\n", chip->opcode);
  	
 	switch(chip->opcode & 0xF000) {
 
@@ -144,7 +147,7 @@ void emulateCycle(Chip8 chip) {
 			switch (N) {
 				case 0x0000:
 					for(int i = 0; i < 2048; ++i) {
-						chip->screen[i] = 0x0;
+						chip->screen[i] = 0;
 					}
 					chip->drawFlag = true;
 					chip->pc += 2;
@@ -165,6 +168,7 @@ void emulateCycle(Chip8 chip) {
 			break;
 		case 0x1000:
 			chip->pc = NNN;
+			break;
 		case 0x2000:
 			chip->stack[chip->sp] = chip->pc;
 			++chip->sp;
@@ -173,9 +177,11 @@ void emulateCycle(Chip8 chip) {
 		case 0x6000:
 			chip->V[X] = NN;
 			chip->pc += 2;
+			break;
 		case 0x7000:
 			chip->V[X] += NN;
 			chip->pc += 2;
+			break;
 		case 0x0033:
 			chip->memory[chip->index] = chip->V[X] / 100;
 			chip->memory[chip->index + 1] = (chip->V[X] / 10) % 10;
@@ -192,17 +198,18 @@ void emulateCycle(Chip8 chip) {
 			break;
 		case 0xD000:
 		{
-			printf("0xD000 called: 0x%X\n", chip->opcode);
-			uint8_t x = chip->V[X];
-			uint8_t y = chip->V[Y];
+			uint8_t x = (chip->V[X]) % 64;
+			uint8_t y = (chip->V[Y]) % 32;
 			uint8_t height = N;
 			uint8_t pixel;
+
+			// printf("x: %d y: %d height: %d\n", x, y, height);
 
 			chip->V[0xF] = 0;
 			for (int yline = 0; yline < height; yline++) {
 				pixel = chip->memory[chip->index + yline];
 				for (int xline = 0; xline < 8; xline++) {
-					if ((pixel & (0x80 >> xline)) != 0) {
+					if (((pixel & (0x80 >> xline))) != 0) {
 						if (chip->screen[(x + xline + ((y + yline) * 64))] == 1)
 							chip->V[0xF] = 1;
 						chip->screen[x + xline + ((y + yline) * 64)] ^= 1;
@@ -215,6 +222,7 @@ void emulateCycle(Chip8 chip) {
 		}
 
 	default:
+		chip->pc += 2;
 		printf ("Unknown opcode: 0x%X\n", chip->opcode);
 		
 	}    

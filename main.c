@@ -112,7 +112,7 @@ void render(Chip8 chip) {
 	setFlag(chip);
 
 	//ifndef DEBUG
-	debugRender(chip);
+	//debugRender(chip);
 	//endif
 
 	// Swap buffer
