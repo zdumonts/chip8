@@ -1,4 +1,4 @@
-// TODO: add last couple of opcodes, fix clock (stuttering), add sound
+// TODO: add last couple of opcodes, add sound
 
 #include "SDL2/SDL.h"
 #include "chip8.h"
