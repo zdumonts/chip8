@@ -9,3 +9,5 @@ To build and run you must have SDL2 installed and the SDL header file in the pro
 Then use the Makefile: (`$ make`) 
 
 Program usage: `./myChip8 <ROM File>`
+
+To run space invaders: `./myChip8 roms/'Space Invaders [David Winter].ch8`
