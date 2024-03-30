@@ -10,4 +10,4 @@ Then use the Makefile: (`$ make`)
 
 Program usage: `./myChip8 <ROM File>`
 
-To run space invaders: `./myChip8 roms/'Space Invaders [David Winter].ch8`
+To run space invaders: `./myChip8 roms/'Space Invaders [David Winter].ch8'`
