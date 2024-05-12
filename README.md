@@ -1,5 +1,5 @@
 # chip8
-built a chip 8 emulator in C using SDL
+built a chip 8 interpreter in C using SDL
 
 ![chip8](https://r3zz.io/images/space-invaders.png)
 
